@@ -37,18 +37,8 @@ import io.reark.reark.utils.Preconditions;
  * Pojo base class that supports overwriting the fields with fields from
  * another instance of the same class.
  */
-public abstract class IdentifiablePojo<T extends IdentifiablePojo> {
-    private static final String TAG = IdentifiablePojo.class.getSimpleName();
-
-    protected final int id;
-
-    public IdentifiablePojo(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
-    }
+public abstract class OverwritablePojo<T extends OverwritablePojo> {
+    private static final String TAG = OverwritablePojo.class.getSimpleName();
 
     @NonNull
     protected abstract Class<T> getTypeParameterClass();
@@ -80,13 +70,13 @@ public abstract class IdentifiablePojo<T extends IdentifiablePojo> {
         return (T) this;
     }
 
-    private boolean hasIllegalAccessModifiers(int modifiers) {
+    protected boolean hasIllegalAccessModifiers(int modifiers) {
         return Modifier.isFinal(modifiers)
                 || Modifier.isStatic(modifiers)
                 || Modifier.isTransient(modifiers);
     }
 
-    private boolean isEmpty(Field field, IdentifiablePojo pojo) {
+    protected boolean isEmpty(Field field, OverwritablePojo pojo) {
         try {
             Object value = field.get(pojo);
             if (value == null) {
@@ -133,24 +123,10 @@ public abstract class IdentifiablePojo<T extends IdentifiablePojo> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
         if (!getTypeParameterClass().isInstance(o)) {
             return false;
         }
 
-        IdentifiablePojo that = (IdentifiablePojo) o;
-
-        if (id != that.id) {
-            return false;
-        }
-
         return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
     }
 }
